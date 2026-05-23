@@ -1,0 +1,14 @@
+---
+services:
+  omeka-s:
+    environment:
+      LIBOPS_SMTP_HOST: mailpit
+      LIBOPS_SMTP_PORT: "1025"
+  mariadb:
+    ports:
+      - 3306:3306
+  mailpit:
+    image: axllent/mailpit:v1.26
+    ports:
+      - 1025:1025
+      - 8025:8025

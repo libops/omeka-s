@@ -1,0 +1,17 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "github>libops/renovate-config"
+  ],
+  "packageRules": [
+    {
+      "matchDatasources": ["docker"],
+      "groupName": "container images"
+    },
+    {
+      "matchPackageNames": ["omeka/omeka-s"],
+      "groupName": "Omeka S"
+    }
+  ]
+}
+
