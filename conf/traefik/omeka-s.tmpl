@@ -1,0 +1,32 @@
+http:
+  services:
+    omeka-s:
+      loadBalancer:
+        servers:
+          - url: "http://omeka-s:80"
+  middlewares:
+  {{- if eq (env "TRAEFIK_TLS_ENABLED") "true" }}
+    omeka-s-https-redirect:
+      redirectScheme:
+        scheme: https
+  {{- end }}
+  routers:
+    omeka-s-web:
+      rule: 'Host(`{{ env "DOMAIN" | default "localhost" }}`)'
+      entryPoints:
+        - web
+      {{- if eq (env "TRAEFIK_TLS_ENABLED") "true" }}
+      middlewares:
+        - omeka-s-https-redirect
+      {{- end }}
+      service: omeka-s
+  {{- if eq (env "TRAEFIK_TLS_ENABLED") "true" }}
+    omeka-s-websecure:
+      rule: 'Host(`{{ env "DOMAIN" }}`)'
+      entryPoints:
+        - websecure
+      service: omeka-s
+      tls:
+        certResolver: letsencrypt
+  {{- end }}
+
