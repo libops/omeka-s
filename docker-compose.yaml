@@ -33,7 +33,7 @@ services:
 
   traefik:
     <<: *common
-    image: traefik:v3.6.13
+    image: traefik:v3.6.13@sha256:34d5089d0b414945342848518b383f11f5b3a645504ed87b77ffeb9d683d0e48
     command:
       - --providers.file.filename=/etc/traefik/dynamic/omeka-s.yml
       - --providers.file.watch=true
