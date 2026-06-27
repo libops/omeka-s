@@ -4,7 +4,7 @@ LibOps Docker Compose template for running [Omeka S](https://omeka.org/s/) with 
 
 ## Requirements
 
-- `sitectl` installed on the host that will run the site.
+- [sitectl](https://sitectl.libops.io/install) installed on the host that will run the site.
 - Docker with the Compose v2 plugin installed on the same host.
 
 ## Quick start
@@ -55,7 +55,7 @@ sitectl set upload-limits enabled --max-upload-size 2G --upload-timeout 10m
 sitectl converge
 ```
 
-See the [Omeka S sitectl plugin docs](https://github.com/libops/sitectl-docs/blob/main/plugins/omeka-s.mdx) for lifecycle operations, API helpers, resource shortcuts, and module maintenance.
+See the [Omeka S sitectl plugin docs](https://sitectl.libops.io/plugins/omeka-s) for lifecycle operations, API helpers, resource shortcuts, and module maintenance.
 
 ## Makefile
 
@@ -78,3 +78,7 @@ Use `sitectl compose ...`, `sitectl traefik ...`, and `sitectl set ...` directly
 - Secrets are generated into `./secrets/`.
 
 PHP `mail()` is routed through `msmtp`. By default, Omeka S relays through the Docker host so production delivery can use the host MTA and LibOps relay path.
+
+## License
+
+The Docker Compose template and LibOps-specific setup in this repository are licensed under the MIT License. Omeka S is licensed separately under the GNU General Public License v3; see `LICENSE.omeka-s`.
