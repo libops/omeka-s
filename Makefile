@@ -1,28 +1,21 @@
-.PHONY: build deps init init-if-needed up down rollout test lint
+SHELL := /bin/bash
 
-deps:
-	docker compose pull --ignore-buildable
+.PHONY: help rollout test lint
+.SILENT:
 
-build: deps
-	docker compose build --pull
+-include custom.Makefile
 
-init: build
-	docker compose run --rm init
+help: ## Show this help message
+	echo 'Usage: make [target]'
+	echo ''
+	echo 'Available targets:'
+	awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  \033[36m%s\033[0m\t%s\n", $$1, $$2}' $(MAKEFILE_LIST) | sort | column -t -s $$'\t'
 
-init-if-needed: build
-	./scripts/init-if-needed.sh
-
-up: init-if-needed
-	docker compose up --remove-orphans -d
-
-down:
-	docker compose down
-
-rollout:
+rollout: ## Roll out the currently checked out Omeka S stack
 	./scripts/rollout.sh
 
-test:
+test: ## Run template checks
 	./scripts/test.sh
 
-lint:
+lint: ## Lint template files
 	./scripts/lint.sh
