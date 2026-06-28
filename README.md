@@ -91,7 +91,7 @@ See the [Omeka S sitectl plugin docs](https://sitectl.libops.io/plugins/omeka-s)
 The Makefile is intentionally small. It only keeps template-specific targets that are not core sitectl operations:
 
 ```bash
-make rollout
+sitectl deploy
 make test
 make lint
 ```
