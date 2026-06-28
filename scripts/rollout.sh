@@ -23,7 +23,7 @@ checkout_ref
 
 docker compose pull --ignore-buildable --quiet || docker compose pull --ignore-buildable || true
 docker compose build --pull
-./scripts/init-if-needed.sh
+docker compose run --rm init
 docker compose up --remove-orphans --wait --pull missing --quiet-pull -d
 
 echo "Rollout complete"

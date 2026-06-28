@@ -1,6 +1,6 @@
 # Omeka S Docker Template
 
-LibOps Docker Compose template for running [Omeka S](https://omeka.org/s/) with Traefik, MariaDB, and the LibOps Omeka S PHP/nginx image. Use it with [`sitectl-omeka-s`](https://github.com/libops/sitectl-omeka-s).
+The Omeka S Docker Template gives you a Docker Compose repository for running [Omeka S](https://omeka.org/s/). It includes Traefik, MariaDB, and the LibOps Omeka S PHP/nginx image, and is designed to be managed with [`sitectl-omeka-s`](https://github.com/libops/sitectl-omeka-s).
 
 Docs:
 
