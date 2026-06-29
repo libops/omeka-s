@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=libops/omeka-s:nginx-1.30.3-php84
+ARG BASE_IMAGE=libops/omeka-s:nginx-1.30.3-php84@sha256:b0fdd4c64e1d5ef4c11971c1900584acd8ab464a971e7fb682bb097738b51067
 FROM ${BASE_IMAGE}
 
 ARG TARGETARCH
