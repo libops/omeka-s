@@ -1,4 +1,3 @@
-# syntax=docker/dockerfile:1.20.0
 ARG BASE_IMAGE=libops/omeka-s:nginx-1.30.3-php84
 FROM ${BASE_IMAGE}
 

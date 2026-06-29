@@ -4,6 +4,7 @@
 secrets/*
 !secrets/.gitignore
 certs/*
+docker-compose.override.yml
+docker-compose.override.yaml
 vendor
 node_modules
-

@@ -41,9 +41,9 @@ services:
       - --entrypoints.web.transport.respondingTimeouts.readTimeout=300s
     environment:
       DOMAIN: "${DOMAIN:-localhost}"
-      TRAEFIK_TLS_ENABLED: "false"
+      URI_SCHEME: "${URI_SCHEME:-http}"
     ports:
-      - "${HOST_INSECURE_PORT:-80}:80"
+      - "80:80"
     volumes:
       - ./conf/traefik/omeka-s.tmpl:/etc/traefik/dynamic/omeka-s.yml:ro
     depends_on:
@@ -55,7 +55,6 @@ services:
     image: libops/omeka-s:nginx-1.30.3-php84
     build:
       context: .
-      pull: true
       args:
         BASE_IMAGE: libops/omeka-s:nginx-1.30.3-php84
     extra_hosts:
@@ -75,7 +74,7 @@ services:
       - omeka-s-files:/var/www/omeka-s/files:rw
     depends_on:
       mariadb:
-        condition: service_started
+        condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "wget -q --spider http://localhost/ || exit 1"]
       interval: 30s
