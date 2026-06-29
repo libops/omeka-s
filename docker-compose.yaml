@@ -35,17 +35,14 @@ services:
     <<: *common
     image: traefik:v3.6.13@sha256:34d5089d0b414945342848518b383f11f5b3a645504ed87b77ffeb9d683d0e48
     command:
-      - --providers.file.filename=/etc/traefik/dynamic/omeka-s.yml
+      - --providers.file.directory=/etc/traefik/dynamic
       - --providers.file.watch=true
       - --entrypoints.web.address=:80
       - --entrypoints.web.transport.respondingTimeouts.readTimeout=300s
-    environment:
-      DOMAIN: "${DOMAIN:-localhost}"
-      URI_SCHEME: "${URI_SCHEME:-http}"
     ports:
       - "80:80"
     volumes:
-      - ./conf/traefik/omeka-s.tmpl:/etc/traefik/dynamic/omeka-s.yml:ro
+      - ./conf/traefik:/etc/traefik/dynamic:ro
     depends_on:
       omeka-s:
         condition: service_healthy
@@ -60,7 +57,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
-      DOMAIN: "${DOMAIN:-localhost}"
+      DOMAIN: "localhost"
       LIBOPS_SMTP_HOST: "${LIBOPS_SMTP_HOST:-host.docker.internal}"
       LIBOPS_SMTP_PORT: "${LIBOPS_SMTP_PORT:-25}"
       SMTP_FROM: "${SMTP_FROM:-}"
