@@ -6,7 +6,7 @@ http:
           - url: "http://omeka-s:80"
   routers:
     omeka-s-web:
-      rule: 'Host(`localhost`)'
+      rule: 'PathPrefix(`/`)'
       entryPoints:
         - web
       service: omeka-s
