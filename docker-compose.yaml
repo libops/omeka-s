@@ -57,11 +57,11 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
-      DOMAIN: "localhost"
+      INGRESS_HOSTNAMES: "localhost"
+      INGRESS_SCHEME: "http"
       LIBOPS_SMTP_HOST: "${LIBOPS_SMTP_HOST:-host.docker.internal}"
       LIBOPS_SMTP_PORT: "${LIBOPS_SMTP_PORT:-25}"
       SMTP_FROM: "${SMTP_FROM:-}"
-      OMEKA_S_ENABLE_HTTPS: "false"
     secrets:
       - source: DB_ROOT_PASSWORD
       - source: OMEKA_S_DB_PASSWORD

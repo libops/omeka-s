@@ -52,7 +52,8 @@ ENV \
     OMEKA_S_SITE_TITLE="Omeka S" \
     OMEKA_S_TIME_ZONE=UTC \
     OMEKA_S_LOCALE=en_US \
-    OMEKA_S_ENABLE_HTTPS=false \
+    INGRESS_HOSTNAMES=localhost \
+    INGRESS_SCHEME=http \
     LIBOPS_SMTP_HOST=host.docker.internal \
     LIBOPS_SMTP_PORT=25 \
     SMTP_FROM=
