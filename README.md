@@ -30,7 +30,9 @@ The site is served through Traefik at `http://localhost`. The first boot creates
 
 ## Local image build
 
-The `omeka-s` service builds this checkout on top of the LibOps Omeka S base image. The Dockerfile downloads the pinned Omeka S release, installs Composer dependencies, then copies local modules and themes so Docker can reuse dependency layers when only site customizations change. Local builds use the platform selected by the Docker CLI and do not push images.
+The `omeka-s` service builds this checkout on top of the app-versioned LibOps Omeka S image. Omeka S core and its application dependencies are already present in that image; this template image only adds the modules and themes owned by the downstream site. Local builds use the platform selected by the Docker CLI and do not push images.
+
+Docker Compose derives the project name from the checkout directory, so independent forks do not share containers, networks, or named volumes by default. Set `COMPOSE_PROJECT_NAME` explicitly when a stable name is required.
 
 ## Basic Operations
 
@@ -49,19 +51,14 @@ sitectl healthcheck
 sitectl validate
 ```
 
-Update image tags or pin a full image reference with [`sitectl image`](https://sitectl.libops.io/commands/image):
+Update the application base tag or pin that base by digest with [`sitectl image`](https://sitectl.libops.io/commands/image):
 
 ```bash
-sitectl image set --tag omeka-s=nginx-1.30.3-php84
-sitectl image set --image omeka-s=libops/omeka-s:nginx-1.30.3-php84@sha256:...
+sitectl image set --tag omeka-s=4.2.1-php84
+sitectl image set --build-arg omeka-s.BASE_IMAGE=libops/omeka-s:4.2.1-php84@sha256:...
 ```
 
-Enable local development bind mounts with [`sitectl set`](https://sitectl.libops.io/commands/set), then apply the component change with [`sitectl converge`](https://sitectl.libops.io/commands/converge):
-
-```bash
-sitectl set dev-mode enabled
-sitectl converge
-```
+The image tag starts with the Omeka S release and ends with the PHP flavor. Updating that base image and rebuilding the derived site image upgrades application core without copying core into the downstream repository. Back up the database and `omeka-s-files` volume before an application upgrade. After the new container starts, sign in at `/admin` and complete any database migration prompt; the upgrade is not complete until that succeeds.
 
 Publish a domain, switch HTTP/TLS mode, configure Let's Encrypt, trust upstream proxies, or tune upload limits with the `ingress` component:
 
@@ -69,8 +66,9 @@ Publish a domain, switch HTTP/TLS mode, configure Let's Encrypt, trust upstream 
 sitectl set ingress enabled --mode https-custom --domain omeka-s.localhost
 sitectl set ingress enabled --mode https-letsencrypt --domain omeka-s.example.org --acme-email ops@example.org
 sitectl set ingress enabled --trusted-ip 203.0.113.10/32 --max-upload-size 2G --upload-timeout 10m
-sitectl converge
 ```
+
+`sitectl set` applies the requested component change immediately. Use `sitectl converge` when you want an interactive review of the complete component state.
 
 The ingress component writes `INGRESS_HOSTNAMES` as comma-separated hostnames and `INGRESS_SCHEME` as `http` or `https` into the app container. Runtime config is rendered from those values during container startup, so generated sites should not carry separate app URL env vars for the same public route.
 
@@ -91,10 +89,16 @@ Use `sitectl compose ...` and `sitectl set ...` directly for normal stack operat
 ## Template notes
 
 - `traefik` is the only published ingress.
-- `omeka-s` is built from this repository and based on the LibOps Omeka S PHP/nginx image.
+- `omeka-s` is a small downstream customization image based on the app-versioned LibOps Omeka S image.
 - `mariadb` stores application data.
 - `omeka-s-files` persists uploaded files.
 - Secrets are generated into `./secrets/`.
+
+Application core and its Composer dependencies belong to the base image. Downstream code belongs under `modules/` and `themes/`; do not copy or bind-mount the complete Omeka S application tree over the image.
+
+Rebuild and redeploy the derived site image after changing a checked-in module or theme. These directories are intentionally not bind-mounted over the base image because doing so would hide modules and themes shipped by Omeka S.
+
+Only MariaDB and the one-shot `database-init` service receive `DB_ROOT_PASSWORD`. The initializer idempotently creates the database and scoped user before Omeka S starts; the long-running app receives only `OMEKA_S_DB_PASSWORD` as `DB_PASSWORD`.
 
 PHP `mail()` is routed through `msmtp`. By default, Omeka S relays through the Docker host so production delivery can use the host MTA and LibOps relay path.
 

@@ -1,9 +1,13 @@
 .git
 .github
 .DS_Store
+.env*
 secrets/*
 !secrets/.gitignore
 certs/*
+!certs/.gitignore
+backups/
+acme.json
 docker-compose.override.yml
 docker-compose.override.yaml
 vendor
