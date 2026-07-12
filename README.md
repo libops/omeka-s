@@ -58,7 +58,9 @@ sitectl image set --tag omeka-s=4.2.1-php84
 sitectl image set --build-arg omeka-s.BASE_IMAGE=libops/omeka-s:4.2.1-php84@sha256:...
 ```
 
-The image tag starts with the Omeka S release and ends with the PHP flavor. Updating that base image and rebuilding the derived site image upgrades application core without copying core into the downstream repository. Back up the database and `omeka-s-files` volume before an application upgrade. After the new container starts, sign in at `/admin` and complete any database migration prompt; the upgrade is not complete until that succeeds.
+The image tag starts with the Omeka S release and ends with the PHP flavor. Updating that base image and rebuilding the derived site image upgrades application core without copying core into the downstream repository. Back up the database and `omeka-s-files` volume before an application upgrade.
+
+Use `sitectl deploy` for the upgrade. It starts only the app and required dependencies while it inspects migration state; public Traefik remains stopped. If deploy prints `ACTION REQUIRED`, it exits nonzero intentionally. In another terminal run `sitectl port-forward 8080:omeka-s:80`, open `http://localhost:8080/admin`, complete the browser migration, and stop the forward with `Ctrl+C`. Then run `sitectl deploy --skip-git --no-pull` to perform the final bounded full-stack start. Reuse the same `--context NAME` on each command when operating a non-active context, then run `sitectl healthcheck` plus application and extension smoke checks.
 
 Publish a domain, switch HTTP/TLS mode, configure Let's Encrypt, trust upstream proxies, or tune upload limits with the `ingress` component:
 
