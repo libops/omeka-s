@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=libops/omeka-s:4.2.1-php84@sha256:3c9d1a0558b705235104998d260dfe916b156fed21b8c34ca0aa5e9bd33bfbee
+ARG BASE_IMAGE=libops/omeka-s:4.2.1-php84@sha256:bd5811eb21a7f56f92ce31ab47c78c5f7870918555ff99a45938befd6b080b22
 FROM ${BASE_IMAGE}
 
 WORKDIR /var/www/omeka-s
