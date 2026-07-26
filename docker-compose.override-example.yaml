@@ -8,7 +8,7 @@ services:
     ports:
       - "3306:3306"
   mailpit:
-    image: axllent/mailpit:v1.26@sha256:079759020faa42e243a07aaa3e31086de70e93e78b02b844e4149e0108dd5428
+    image: axllent/mailpit:v1.30@sha256:b868afa176bfd6cce2323ea316cd99ccad77915e51e595748f6d786700ecf109
     ports:
       - "1025:1025"
       - "8025:8025"
