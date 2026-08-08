@@ -49,7 +49,14 @@ Check the site and context configuration with [`sitectl healthcheck`](https://si
 ```bash
 sitectl healthcheck
 sitectl validate
+sitectl verify --strict
 ```
+
+### Behavioral release gate
+
+`sitectl verify --strict` checks the running Omeka S version, scoped database identity, `/admin` migration state, sites API collection, and files-volume access. It is read-only on retained sites. Fresh disposable CI additionally runs `sitectl verify --strict --disposable`, which writes, reads, and removes a uniquely named files-volume probe.
+
+Do not use `--disposable` on retained customer data. Process-boundary rollout tests cover current, migration-required, and operator-completed retry branches while proving Traefik remains stopped at the gate. Hosted acceptance must still run a real prior-version database/files fixture through the browser migration and verify public API/media behavior afterward.
 
 Update the application base tag or pin that base by digest with [`sitectl image`](https://sitectl.libops.io/commands/image):
 
