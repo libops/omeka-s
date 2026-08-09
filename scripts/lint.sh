@@ -17,9 +17,9 @@ else
 fi
 
 if command -v shellcheck >/dev/null 2>&1; then
-  find scripts -name "*.sh" -exec shellcheck {} +
+  find scripts -type f \( -name "*.sh" -o -path "scripts/testdata/bin/*" \) -exec shellcheck {} +
 else
-  find scripts -name "*.sh" -exec bash -n {} +
+  find scripts -type f \( -name "*.sh" -o -path "scripts/testdata/bin/*" \) -exec bash -n {} +
 fi
 
 docker compose build --pull "${service}"
@@ -33,22 +33,5 @@ fi
 docker run --rm \
   --volume "${PWD}:/workspace:ro" \
   --workdir /workspace \
-  --entrypoint sh \
-  "${image_id}" \
-  -lc '
-    set -eu
-
-    paths=""
-    for dir in modules themes rootfs; do
-      if [ -d "${dir}" ]; then
-        paths="${paths} ${dir}"
-      fi
-    done
-
-    if [ -z "${paths}" ] || ! find ${paths} -type f -name "*.php" | grep -q .; then
-      echo "No custom Omeka S PHP files found; skipping PHP lint."
-      exit 0
-    fi
-
-    find ${paths} -type f -name "*.php" -exec php -l {} \;
-  '
+  --entrypoint /workspace/scripts/lint-omeka-s-php.sh \
+  "${image_id}"

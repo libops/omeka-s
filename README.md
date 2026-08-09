@@ -9,7 +9,7 @@ Docs:
 
 ## Requirements
 
-- [sitectl](https://sitectl.libops.io/install) installed on the host that will run the site.
+- [sitectl](https://sitectl.libops.io/install) v1.8.2 or newer installed on the host that will run the site.
 - [`sitectl-omeka-s`](https://github.com/libops/sitectl-omeka-s) installed for Omeka S create, validation, healthcheck, and helper commands.
 - Docker with the Compose v2 plugin installed on the same host.
 
@@ -54,9 +54,15 @@ sitectl verify --strict
 
 ### Behavioral release gate
 
-`sitectl verify --strict` checks the running Omeka S version, scoped database identity, `/admin` migration state, sites API collection, and files-volume access. It is read-only on retained sites. Fresh disposable CI additionally runs `sitectl verify --strict --disposable`, which writes, reads, and removes a uniquely named files-volume probe.
+`sitectl verify --strict` checks the running Omeka S version, scoped database identity, `/admin` migration state, sites API collection, and files-volume access. It is read-only on retained sites. Fresh disposable CI additionally runs `sitectl verify --strict --disposable`, which writes, reads, and removes a uniquely named files-volume probe. Runtime inspection uses checked-in programs mounted read-only by this template instead of injecting PHP, SQL, or shell source through container command arguments.
 
-Do not use `--disposable` on retained customer data. Process-boundary rollout tests cover current, migration-required, and operator-completed retry branches while proving Traefik remains stopped at the gate. Hosted acceptance must still run a real prior-version database/files fixture through the browser migration and verify public API/media behavior afterward.
+Do not use `--disposable` on retained customer data. The checked-in migration gate keeps Traefik stopped when browser migration is required. Hosted acceptance must still run a real prior-version database/files fixture through the browser migration and verify public API/media behavior afterward.
+
+### Versioned runtime programs
+
+Template v1.2.0 adds the rollout-readiness, browser-migration gate, and strict-verification programs under `scripts/`. The `omeka-s` service mounts them read-only at stable paths under `/usr/local/bin` and `/usr/local/share/libops`.
+
+Before stopping a running site, `sitectl deploy` verifies that every required source is a regular checked-in file, that shell programs remain executable, and that Compose declares every mount read-only. It also confirms that the effective service can use every mounted program. A site created from template v1.1.0 or older must first incorporate the v1.2.0 template changes. Incompatible checkouts fail before existing containers are stopped; the plugin does not substitute inline fallback behavior.
 
 Update the application base tag or pin that base by digest with [`sitectl image`](https://sitectl.libops.io/commands/image):
 
@@ -102,6 +108,7 @@ Use `sitectl compose ...` and `sitectl set ...` directly for normal stack operat
 - `mariadb` stores application data.
 - `omeka-s-files` persists uploaded files.
 - Secrets are generated into `./secrets/`.
+- Rollout and verification programs are versioned with the site and mounted read-only into `omeka-s`.
 
 Application core and its Composer dependencies belong to the base image. Downstream code belongs under `modules/` and `themes/`; do not copy or bind-mount the complete Omeka S application tree over the image.
 

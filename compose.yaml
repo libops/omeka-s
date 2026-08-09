@@ -71,6 +71,13 @@ services:
         target: DB_PASSWORD
       - source: OMEKA_S_ADMIN_PASSWORD
     volumes:
+      - ./scripts/omeka-s-database-config.php:/usr/local/share/libops/sitectl-omeka-s-database-config.php:ro,z
+      - ./scripts/omeka-s-rollout-migration-gate.sh:/usr/local/bin/sitectl-omeka-s-rollout-migration-gate:ro,z
+      - ./scripts/omeka-s-rollout-readiness.sh:/usr/local/bin/sitectl-omeka-s-rollout-readiness:ro,z
+      - ./scripts/omeka-s-verify-database.sh:/usr/local/bin/sitectl-omeka-s-verify-database:ro,z
+      - ./scripts/omeka-s-verify-storage.sh:/usr/local/bin/sitectl-omeka-s-verify-storage:ro,z
+      - ./scripts/omeka-s-verify.sql:/usr/local/share/libops/sitectl-omeka-s-verify.sql:ro,z
+      - ./scripts/omeka-s-version.php:/usr/local/share/libops/sitectl-omeka-s-version.php:ro,z
       - omeka-s-files:/var/www/omeka-s/files:rw
     depends_on:
       database-init:
