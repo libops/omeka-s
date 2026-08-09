@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+
+set -eu
+
+: "${FAKE_DATE_STATE:?FAKE_DATE_STATE is required}"
+
+if [ ! -e "${FAKE_DATE_STATE}" ]; then
+  : > "${FAKE_DATE_STATE}"
+  echo 100
+else
+  echo 701
+fi
