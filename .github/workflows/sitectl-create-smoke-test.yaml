@@ -28,3 +28,7 @@ jobs:
       create-definition: ${{ matrix.create_definition }}
       create-args: ${{ matrix.create_args }}
       packages: sitectl sitectl-omeka-s
+      package-versions: sitectl=1.8.2 sitectl-omeka-s=1.2.0
+      allow-unversioned-packages: false
+      run-verify: true
+      verify-args: --disposable
